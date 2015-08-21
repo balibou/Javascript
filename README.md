@@ -217,7 +217,8 @@ pros:
 ```
 for (var key of table) {
   console.log(key + ' = ' + table[key]);
-}```
+}
+```
 
 pros :
 * guarantee the order of key
