@@ -21,7 +21,8 @@ console.log(i); // 5
 for (let i = 0; i < 5; i++) {
   // bla
 }
-console.log(i); // Uncaught ReferenceError : i is not defined```
+console.log(i); // Uncaught ReferenceError : i is not defined
+```
 
 pros :
 * ```let``` scope only exists in the block where it has been created
