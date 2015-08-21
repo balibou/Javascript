@@ -224,6 +224,7 @@ pros :
 * implement the iterable protocol (the object must have a property with a Symbol.iterator key, it would be : ```table [Symbol.iterator]```). It defines special keys that will never conflict with regular object keys. (TODO : add content from https://strongloop.com/strongblog/introduction-to-es6-iterators/)
 
 ## Class
+
 ```
 class Player {
   static bouyah() {
@@ -245,6 +246,7 @@ var Tom = new Player("Tom");
 Tom.getLife(); // 100
 Player.bouyah(); // alert('Bouyah');
 ```
+
 pros :
 * new syntax with ```class```, ```static``` (static method called with the ```Player``` object), ```constructor```(called for each instantiation).
 
