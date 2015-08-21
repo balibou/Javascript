@@ -340,10 +340,12 @@ var two = unTableau[1];
 New assignement method :
 
 ```
-var { email, message } = req.body; //create an email and message variable from the req.body object
+var { email, message } = req.body;
+//create an email and message variable from the req.body object
 
 var unTableau = [1,2,3];
-var [one, two] = unTableau; //create a one and two variable with the value in the index (0 and 1)
+var [one, two] = unTableau;
+//create a one and two variable with the value in the index (0 and 1)
 ```
 
 ## Promise
@@ -414,7 +416,8 @@ var array2 = [3, 4];
 array1.push(...array2); //[1, 2, 3, 4]
 
 var articulations = ['épaules', 'genoux'];
-var corps = ['têtes', ...articulations, 'bras', 'pieds']; //['têtes', 'épaules', 'genoux', 'bras', 'pieds']
+var corps = ['têtes', ...articulations, 'bras', 'pieds'];
+//['têtes', 'épaules', 'genoux', 'bras', 'pieds']
 ```
 
 next :
