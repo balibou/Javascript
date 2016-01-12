@@ -115,7 +115,41 @@ numbers.forEach((element, index) => { console.log('numbers[' + index + '] = ' + 
 pros :
 * improve visibility and clear code
 * it comes from the coffeescript syntax
+* ```params => ({foo: bar})``` can return an object literal expression
+* ```(param1, param2, ...rest) => { statements }``` rest are supported
 
+```
+function Person() {
+  this.age = 0;
+  setInterval(function growUp() { // In nonstrict mode, the growUp() function defines `this` as the global object because I invok window.setInterval()
+    this.age++;
+  }, 1000);
+}
+var p = new Person();
+```
+
+ES3/5:
+```
+function Person() {
+  var self = this;
+  self.age = 0;
+  setInterval(function growUp() {
+    self.age++;
+  }, 1000);
+}
+```
+Or
+```
+function Person() {
+  this.age = 0;
+  setInterval(this.growUp.bind(this), 1000);
+}
+function growUp() {
+    this.age++;
+}
+```
+
+ES2015:
 ```
 function Person(){
   this.age = 0;
@@ -193,13 +227,13 @@ cons :
 
 ## Iterators
 
-ES3 => ES5 => ES2015
+ES3 :arrow_right: ES5 :arrow_right: ES2015
 
 Array:
-for => forEach => for-of
+for :arrow_right: forEach :arrow_right: for-of
 
 Object:
-for-in => Object.keys => previous ones or turn into iterable object
+for-in :arrow_right: Object.keys :arrow_right: previous ones or turn into iterable object
 
 ### ES3 (Most used : for and for-in (while, do-while)):
 
@@ -668,17 +702,18 @@ Player.prototype.getLife = function () {
 };
 
 function Mage(name) {
-  Player.call(this, name, life); // super(name, life)
+  Player.call(this, name); // super(name, life)
 }
 
 Mage.prototype = Object.create(Player.prototype);
-Mage.prototype.constructor = Mage;
+Mage.prototype.constructor = Mage; // ?
 Mage.prototype.describe = function () {
     return Player.prototype.getLife.call(this); // super.getLife()
 };
 
 var TomTheWizard = new Mage('Tom');
 TomTheWizard.getLife(); // 100
+TomTheWizard.describe(); // 100
 ```
 
 ES2015:
@@ -818,8 +853,59 @@ let obj = { foo: 123 };
 
     console.log(writable, configurable); // true true
 ```
+## Callbacks
+
+Callback is passing a function to another function as a parameter (higher order function). No return values, only calling another function with the values. These error-first callbacks are in the heart of Node.js.
+
+```
+Something.save(function(err) {  
+  if (err)  {
+    //error handling
+    return;
+  }
+  console.log('success');
+});
+```
+
+cons:
+* callback hell
+* can't return value, nor ```throw```
+
+## Async module in nodeJS
+```
+async.map([1, 2, 3], AsyncSquaringLibrary.square,  
+  function(err, result){
+  // result will be [1, 4, 9]
+});
+```
+
+pros:
+* answer in nodeJS to deal with asynchronous function easily
 
 ## Promise
+
+A promise represents the eventual result of an asynchronous operation.
+
+```
+Something.save()  
+  .then(function() {
+    console.log('success');
+  })
+  .catch(function() {
+    //error handling
+  })
+```
+
+```
+saveSomething()  
+  .then(updateOtherthing)
+  .then(deleteStuff)  
+  .then(logResults);
+```
+
+Using promises without the sugar method because libraries exposes a callback interface only. [http://blog.getify.com/promises-part-4/]
+Solution : wrapping callback with a promise :
+
 ```
 function findUser(id) {
   return new Promise(function(resolve, reject) {
@@ -846,6 +932,69 @@ The ```findUser``` function return a new instance of the new class ```Promise```
 pros:
 * No more callback hell
 * Clear code
+
+Some libraries/frameworks out there already support providing a callback and a Promise interface at the same time.
+
+```
+function foo(cb) {  
+  if (cb) {
+    return cb();
+  }
+  return new Promise(function (resolve, reject) {
+
+  });
+}
+```
+
+## Generators / yield
+
+A generator function allows to execute a function and pause it at any point.
+
+```
+function* foo () {  
+  var index = 0;
+  while (index < 2) {
+    yield index++;
+  }
+}
+var bar =  foo();
+
+console.log(bar.next());    // { value: 0, done: false }  
+console.log(bar.next());    // { value: 1, done: false }  
+console.log(bar.next());    // { value: undefined, done: true }
+```
+
+Co is a generator based control flow goodness for Node.js and the browser, using promises.
+
+```
+co(function* (){  
+  yield Something.save();
+}).then(function() {
+  // success
+})
+.catch(function(err) {
+  //error handling
+});
+```
+
+## Async / await
+
+```
+async function save(Something) {  
+  try {
+    await Something.save()
+  } catch (ex) {
+    //error handling
+  }
+  console.log('success');
+}
+```
+
+```
+async function save(Something) {  
+  await Promise.all[Something.save(), Otherthing.save()]
+}
+```
 
 ## Default parameter
 
@@ -984,7 +1133,7 @@ function addx(x){
     function addy(y){
         return x+y;
     }
-    return addy
+    return addy;
 }
 
 function add(x,y){
@@ -1033,21 +1182,23 @@ test('a','b','c',8,[56,-89]);
 //output is Array [ "a", "b", "c", 8, Array[2] ]
 ```
 
+* Sandbox : playground to test an API
+
 next :
 
-* https://blog.risingstack.com/asynchronous-javascript/
 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator
-* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
 * http://www.2ality.com/2015/08/es6-map-json.html
 * https://github.com/mattdesl/promise-cookbook
 * http://blogs.msdn.com/b/eternalcoding/archive/2015/09/30/javascript-goes-to-asynchronous-city.aspx
-* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
 * https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Instructions/try...catch
-* https://developer.uber.com/v1/sandbox/
 * http://www.2ality.com/2015/08/getting-started-es6.html (TODO: 16 and 17)
 * https://medium.com/@housecor/12-rules-for-professional-javascript-in-2015-f158e7d3f0fc
 * https://medium.com/javascript-scene/10-interview-questions-every-javascript-developer-should-know-6fa6bdf5ad95
 * http://engineering.widen.com/blog/future-of-the-web-react-falcor/
+* http://www.sitepoint.com/javascript-goes-asynchronous-awesome/
+* https://codewords.recurse.com/issues/four/lazy-composable-and-modular-javascript
+* http://blog.getify.com/arrow-this/
+* http://maxlab.fr/2014/05/gerer-lauthentification-dune-application-javascript/
 
 ##### Markdown Cheatsheet : https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 ##### :question: Sources
@@ -1072,6 +1223,9 @@ next :
 * https://github.com/mgechev/javascript-algorithms
 * https://github.com/sorrycc/awesome-javascript
 * http://projects.formidablelabs.com/es6-interactive-guide/#/
+* http://reactivex.io/learnrx/
+* http://teropa.info/blog/2015/03/02/change-and-its-detection-in-javascript-frameworks.html
+* http://www.sitepoint.com/top-javascript-frameworks-libraries-tools-use/
 
 ##### :eyes: Not JS Stuff
 * http://www.hongkiat.com/blog/social-media-imaging-tools/
